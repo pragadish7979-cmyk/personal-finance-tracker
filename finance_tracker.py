@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "Prawin2425"
+    "password": "YOUR PASSWORD"
 }
 
 DB_NAME = "finance_tracker"

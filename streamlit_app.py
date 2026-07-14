@@ -9,6 +9,7 @@ st.title("💰 Personal Finance Tracker")
 menu = st.sidebar.selectbox(
     "Menu",
     [
+<<<<<<< HEAD
     "Dashboard",
     "Add Income",
     "Add Expense",
@@ -67,6 +68,17 @@ if menu == "Dashboard":
             "💵 Savings Rate",
             f"{savings_rate:.1f}%"
         )
+=======
+        "Add Income",
+        "Add Expense",
+        "Summary",
+        "Transactions",
+        "Graph",
+        "Budget Score"
+    ]
+)
+
+>>>>>>> 5994b93 (remove dtatabase password)
 # ADD INCOME
 if menu == "Add Income":
 
@@ -157,6 +169,7 @@ elif menu == "Transactions":
 
         df = pd.DataFrame(data)
 
+<<<<<<< HEAD
         st.dataframe(
     df,
     use_container_width=True
@@ -165,6 +178,9 @@ elif menu == "Transactions":
 st.write(
     f"Total Transactions: {len(df)}"
 )
+=======
+        st.dataframe(df)
+>>>>>>> 5994b93 (remove dtatabase password)
 
 # GRAPH
 elif menu == "Graph":
@@ -234,6 +250,7 @@ elif menu == "Budget Score":
         st.metric(
             "Budget Score",
             f"{score:.1f}/100"
+<<<<<<< HEAD
         )
 # DELETE TRANSACTION
 
@@ -277,3 +294,6 @@ elif menu == "Delete Transaction":
             )
 
             st.rerun()
+=======
+        )
+>>>>>>> 5994b93 (remove dtatabase password)
