@@ -9,15 +9,64 @@ st.title("💰 Personal Finance Tracker")
 menu = st.sidebar.selectbox(
     "Menu",
     [
-        "Add Income",
-        "Add Expense",
-        "Summary",
-        "Transactions",
-        "Graph",
-        "Budget Score"
-    ]
+    "Dashboard",
+    "Add Income",
+    "Add Expense",
+    "Transactions",
+    "Graph",
+    "Budget Score",
+    "Delete Transaction"
+]
 )
+# DASHBOARD
+if menu == "Dashboard":
 
+    data = fetch_data()
+
+    total_income = sum(
+        float(d["amount"])
+        for d in data
+        if d["type"] == "Income"
+    )
+
+    total_expense = sum(
+        float(d["amount"])
+        for d in data
+        if d["type"] == "Expense"
+    )
+
+    balance = total_income - total_expense
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "💰 Balance",
+            f"₹{balance:,.2f}"
+        )
+
+    with col2:
+        st.metric(
+            "📈 Income",
+            f"₹{total_income:,.2f}"
+        )
+
+    with col3:
+        st.metric(
+            "📉 Expense",
+            f"₹{total_expense:,.2f}"
+        )
+
+    if total_income > 0:
+
+        savings_rate = (
+            balance / total_income
+        ) * 100
+
+        st.metric(
+            "💵 Savings Rate",
+            f"{savings_rate:.1f}%"
+        )
 # ADD INCOME
 if menu == "Add Income":
 
@@ -108,7 +157,14 @@ elif menu == "Transactions":
 
         df = pd.DataFrame(data)
 
-        st.dataframe(df)
+        st.dataframe(
+    df,
+    use_container_width=True
+)
+
+st.write(
+    f"Total Transactions: {len(df)}"
+)
 
 # GRAPH
 elif menu == "Graph":
@@ -179,3 +235,45 @@ elif menu == "Budget Score":
             "Budget Score",
             f"{score:.1f}/100"
         )
+# DELETE TRANSACTION
+
+elif menu == "Delete Transaction":
+
+    data = fetch_data()
+
+    if data:
+
+        df = pd.DataFrame(data)
+
+        st.dataframe(df)
+
+        transaction_id = st.number_input(
+            "Transaction ID",
+            min_value=1,
+            step=1
+        )
+
+        if st.button(
+            "Delete Transaction"
+        ):
+
+            conn, cursor = connect_db()
+
+            cursor.execute(
+                f"""
+                DELETE FROM {DB_TABLE}
+                WHERE id = %s
+                """,
+                (transaction_id,)
+            )
+
+            conn.commit()
+
+            cursor.close()
+            conn.close()
+
+            st.success(
+                "Transaction Deleted"
+            )
+
+            st.rerun()

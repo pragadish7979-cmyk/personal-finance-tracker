@@ -196,7 +196,113 @@ def fetch_data(where_clause=""):
 
         if conn:
             conn.close()
+# ---------------- DELETE TRANSACTION ----------------
 
+def delete_transaction():
+
+    data = fetch_data()
+
+    if not data:
+        print("No transactions found.")
+        return
+
+    print("\n--- Transactions ---")
+
+    for row in data:
+
+        print(
+            f"ID: {row['id']} | "
+            f"{row['name']} | "
+            f"₹{row['amount']}"
+        )
+
+    try:
+
+        transaction_id = int(
+            input(
+                "\nEnter Transaction ID to delete: "
+            )
+        )
+
+    except ValueError:
+
+        print("Invalid ID.")
+        return
+
+    conn, cursor = connect_db()
+
+    cursor.execute(
+        f"""
+        DELETE FROM {DB_TABLE}
+        WHERE id = %s
+        """,
+        (transaction_id,)
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    print("✅ Transaction deleted.")
+
+# ---------------- EDIT TRANSACTION ----------------
+
+def edit_transaction():
+
+    data = fetch_data()
+
+    if not data:
+        print("No transactions found.")
+        return
+
+    for row in data:
+
+        print(
+            f"ID: {row['id']} | "
+            f"{row['name']} | "
+            f"₹{row['amount']}"
+        )
+
+    try:
+
+        transaction_id = int(
+            input(
+                "\nEnter ID to edit: "
+            )
+        )
+
+        new_amount = float(
+            input(
+                "Enter new amount: "
+            )
+        )
+
+    except ValueError:
+
+        print("Invalid input.")
+        return
+
+    conn, cursor = connect_db()
+
+    cursor.execute(
+        f"""
+        UPDATE {DB_TABLE}
+        SET amount = %s
+        WHERE id = %s
+        """,
+        (
+            new_amount,
+            transaction_id
+        )
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    print("✅ Transaction updated.")
 # ---------------- FILTER ----------------
 
 def display_filtered_transactions():
@@ -473,7 +579,15 @@ def main_menu():
         )
 
         print(
-            "7. Exit"
+            "7. Delete Transaction"
+        )
+
+        print(
+            "8. Edit Transaction"
+        )
+
+        print(
+            "9. Exit"
         )
 
         ch = input(
@@ -505,9 +619,14 @@ def main_menu():
             calculate_budget_score()
 
         elif ch == "7":
+            delete_transaction()
 
+        elif ch == "8":
+            edit_transaction()
+        
+        elif ch == "9"
             break
-
+            
         else:
 
             print(
